@@ -25,6 +25,11 @@ font = pygame.font.SysFont("Arial", 40)
 button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2, 200, 60)
 score = 0
 
+#Efeitos Sonoros por comando e colisão
+sound_jump= pygame.mixer.Sound('./venv/sound/jump.wav')
+sound_hit= pygame.mixer.Sound('./venv/sound/hitHurt.wav')
+sound_point = pygame.mixer.Sound('./venv/sound/SFX： Point - Flappy Bird.mp3')
+
 def draw_restart_button():
     pygame.draw.rect(screen, (0, 200, 0), button_rect)
     text = font.render("Jogar Novamente", True, (255, 255, 255))
@@ -149,6 +154,7 @@ while True:
 
         if game_state == "playing" and event.type == KEYDOWN and event.key == K_SPACE:
             bird.bump()
+            sound_jump.play()
 
         if game_state == "game_over" and event.type == MOUSEBUTTONDOWN:
             if button_rect.collidepoint(event.pos):
@@ -167,6 +173,7 @@ while True:
             if (pipe.rect.right < bird.rect.left) and (not pipe.scored):
                 score += 0.5
                 pipe.scored = True
+                sound_point.play()
 
         # Gera novo chão
         if is_off_screen(ground_group.sprites()[0]):
@@ -185,6 +192,7 @@ while True:
         # Checa colisão
         if (pygame.sprite.groupcollide(bird_group, ground_group, False, False, pygame.sprite.collide_mask) or
             pygame.sprite.groupcollide(bird_group, pipe_group, False, False, pygame.sprite.collide_mask)):
+            sound_hit.play()
             game_state = "game_over"
 
     # Desenha sprites
